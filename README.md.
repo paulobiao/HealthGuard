@@ -30,3 +30,25 @@ uvicorn src.main:app --reload
 
 docker build -t healthguard:0.1.0 .
 docker run -p 8000:8000 healthguard:0.1.0
+
+📁 Project Layout
+src/
+  healthguard/
+    main.py        # FastAPI app & endpoints
+    encryption.py  # AES encryption utilities
+    audit.py       # access logging
+    models.py      # schemas for patient data
+  tests/
+    test_encryption.py
+    test_audit.py
+data/
+  sample_medical_records.csv
+docs/
+  compliance_hipaa.md
+.github/workflows/ci.yml
+Dockerfile
+docker-compose.yml
+requirements.txt
+LICENSE
+README.md
+
