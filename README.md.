@@ -1,0 +1,32 @@
+# 🏥 HealthGuard™ — Open-Source Healthcare Data Protection System
+
+**Objective**  
+Demonstrate real-time data encryption, access audit, and risk detection for healthcare systems — aligned with HIPAA/privacy best practices.
+
+This repository is portfolio-grade evidence of applied cybersecurity for EB2-NIW.
+
+---
+
+## 🚀 Features
+- Encryption-at-rest (AES-256) + integrity checks  
+- Access **audit logs** (who/when/what) with reason codes  
+- **2FA** (TOTP) simulation + RBAC (roles)  
+- FastAPI service + Docker + CI  
+- Sample data and scripts for demos  
+
+---
+
+## 🧠 Tech Stack
+Python 3.11 • FastAPI • cryptography • PyJWT • SQLite/PostgreSQL • Docker • GitHub Actions  
+
+---
+
+## ▶️ Quickstart
+```bash
+git clone https://github.com/paulobiao/HealthGuard.git
+cd HealthGuard
+pip install -r requirements.txt
+uvicorn src.main:app --reload
+
+docker build -t healthguard:0.1.0 .
+docker run -p 8000:8000 healthguard:0.1.0
