@@ -1,40 +1,38 @@
-
-from fastapi import FastAPI, HTTPException
-from .models import RecordIn, Token
-from .utils import encrypt, decrypt
+from fastapi import FastAPI
 from pydantic import BaseModel
-import json
+from cryptography.fernet import Fernet
+import time, os
+from dotenv import load_dotenv
 
-app = FastAPI(title="HealthGuard API", version="0.1.0")
+load_dotenv()
+app = FastAPI(title="HealthGuard API", version="0.2.0")
 
-DB = {}
-AUDIT = []
+KEY = os.getenv("HEALTHGUARD_KEY")
+if not KEY:
+    # fallback inseguro para demo; use .env em produção
+    KEY = Fernet.generate_key().decode()
+cipher = Fernet(KEY.encode())
+audit_log = []
 
-class Score(BaseModel):
-    ok: bool
+class Record(BaseModel):
+    patient_id: str
+    data: str
 
-@app.get("/health")
-def health(): return {"status": "ok"}
+@app.post("/api/v1/encrypt")
+def encrypt_record(rec: Record):
+    token = cipher.encrypt(rec.data.encode())
+    audit_log.append({"patient_id": rec.patient_id, "action": "encrypt", "timestamp": time.time()})
+    return {"encrypted": token.decode(), "audit_count": len(audit_log)}
 
-@app.post("/api/v1/record/encrypt")
-def add_record(rec: RecordIn):
-    enc = encrypt(json.dumps(rec.model_dump()).encode())
-    DB[rec.patient.patient_id] = enc
-    AUDIT.append({"event":"WRITE","pid": rec.patient.patient_id})
-    return {"stored": True}
+@app.get("/api/v1/audit")
+def get_audit():
+    return {"entries": audit_log[-5:]}
 
-@app.get("/api/v1/record/{pid}")
-def get_record(pid: str):
-    if pid not in DB: raise HTTPException(404, "not found")
-    AUDIT.append({"event":"READ","pid": pid})
-    data = json.loads(decrypt(DB[pid]).decode())
-    return data
-
-@app.get("/api/v1/compliance/report")
-def compliance():
-    return {
-        "encrypted_records": len(DB),
-        "audit_events": len(AUDIT),
-        "2fa": "TOTP (stub)",
-        "hipaa_controls": ["encryption-at-rest", "access-logs"]
-    }
+@app.post("/api/v1/key/rotate")
+def rotate_key():
+    """Simula rotação de chave (gera nova Fernet key)."""
+    global cipher, KEY
+    KEY = Fernet.generate_key().decode()
+    cipher = Fernet(KEY.encode())
+    audit_log.append({"action": "rotate_key", "timestamp": time.time()})
+    return {"ok": True, "new_key_set": True, "audit_count": len(audit_log)}
