@@ -6,6 +6,10 @@
 [![HIPAA](https://img.shields.io/badge/Compliance-HIPAA-green)](#)
 [![Encryption](https://img.shields.io/badge/Feature-Encryption%20%26%202FA-blue)](#)
 
+> **Open-Source Cybersecurity Project by Paulo Bião** — Healthcare data protection system demonstrating encryption, audit logging, and privacy-by-design architecture for EB2-NIW portfolio.
+
+# HealthGuard™ – Open-Source Healthcare Data Protection System
+
 # 🏥 HealthGuard™ — Open-Source Healthcare Data Protection System
 
 **Objective**  
